@@ -1,0 +1,53 @@
+import { createContext, useState } from "react";
+
+interface TemperatureContextType {
+	temperatureUnit: TemperatureTypes | undefined;
+	changeTemperatureUnit: (unit: TemperatureTypes | undefined) => void;
+}
+
+/*
+	c = celcius
+	f = fahrenheit
+*/
+export enum TemperatureTypes {
+	"c" = "c",
+	"f" = "f",
+}
+
+// export const TemperatureContext = createContext<TemperatureTypes | undefined>(undefined);
+export const TemperatureContext = createContext<TemperatureContextType | undefined>(undefined);
+
+export const TemperatureProvider = ({ children }: any) => {
+	const storedUnit = localStorage.getItem("temperatureUnit");
+	let _tempType;
+	if (storedUnit && storedUnit in TemperatureTypes) {
+		_tempType = TemperatureTypes[storedUnit as keyof typeof TemperatureTypes];
+	} else {
+		_tempType = TemperatureTypes.c;
+	}
+
+	const [temperatureUnit, setTemperatureUnit] = useState<TemperatureTypes | undefined>(_tempType);
+
+	const changeTemperatureUnit = (unit: TemperatureTypes | undefined) => {
+		switch (unit) {
+			case TemperatureTypes.c:
+				setTemperatureUnit(TemperatureTypes.c);
+				localStorage.setItem("temperatureUnit", TemperatureTypes.c);
+				break;
+			case TemperatureTypes.f:
+				setTemperatureUnit(TemperatureTypes.f);
+				localStorage.setItem("temperatureUnit", TemperatureTypes.f);
+				break;
+			default:
+				setTemperatureUnit(TemperatureTypes.c);
+				localStorage.setItem("temperatureUnit", TemperatureTypes.c);
+				break;
+		}
+	};
+
+	return (
+		<TemperatureContext.Provider value={{ temperatureUnit, changeTemperatureUnit }}>
+			{children}
+		</TemperatureContext.Provider>
+	);
+};

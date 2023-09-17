@@ -1,0 +1,5 @@
+[build]
+    command = "npm run build"
+    # functions = "lambda" # Define this as a lambda function
+    functions = "netlify/functions"
+    publish = "build"
